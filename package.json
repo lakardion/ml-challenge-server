@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "DEBUG=app,app:* nodemon app.js",
+    "start-windows": "set DEBUG=app,app:* && nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

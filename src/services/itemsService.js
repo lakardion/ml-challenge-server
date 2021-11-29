@@ -1,27 +1,10 @@
 import axios from "axios";
 import debug from "debug";
+import { itemDetailMapper, itemMapper } from "../Utils/UtilFunctions.js";
 import externalApis from "./externalApis.js";
 import messageService from "./messageService.js";
 
 const itemsServiceDebug = debug("app:itemsService");
-const defaultCurrency = "ARS";
-const itemMapper = (item) => {
-  const amount = item.prices.prices.find(
-    (p) => p.currency_id === defaultCurrency
-  ).amount;
-  return {
-    id: item.id,
-    title: item.title,
-    price: {
-      currency: defaultCurrency,
-      amount,
-      decimals: 0,
-    },
-    picture: item.thumbnail,
-    condition: item.condition,
-    free_shipping: item.shipping.free_shipping,
-  };
-};
 
 function itemsService() {
   const getCategoryPath = async (categoryId) => {
@@ -80,20 +63,30 @@ function itemsService() {
   };
 
   const getDetailByItemId = async (id) => {
+    const callerName = "getDetailByItemId";
     try {
       const { data: item } = await axios.get(externalApis.itemById(id));
-      const { data: itemDescription } = await axios.get(
-        externalApis.itemDetailById(id)
-      );
-      itemsServiceDebug(
-        "getDetailByItemId",
-        JSON.stringify({ item, itemDescription })
-      );
-    } catch (err) {}
+      const {
+        data: { plain_text: itemDescription },
+      } = await axios.get(externalApis.itemDetailById(id));
+      itemsServiceDebug(messageService.success(callerName)("Fetched items"));
+      return {
+        author: {
+          name: "",
+          lastName: "",
+        },
+        item: {
+          ...itemDetailMapper(item),
+          description: itemDescription,
+        },
+      };
+    } catch (err) {
+      itemsServiceDebug(messageService.error(callerName)(err));
+    }
   };
 
   return {
-    getCategories: getCategoryPath,
+    getCategoryPath,
     getDetailByItemId,
     getItemsBySearchQuery,
   };
