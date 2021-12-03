@@ -24,6 +24,7 @@ export const itemMapper = (item) => {
     picture: item.thumbnail,
     condition: item.condition,
     free_shipping: item.shipping.free_shipping,
+    state_name: item.address.state_name,
   };
 };
 export const itemDetailMapper = (item) => ({

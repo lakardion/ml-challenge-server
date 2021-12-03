@@ -3,11 +3,13 @@ import chalk from "chalk";
 import debug from "debug";
 import morgan from "morgan";
 import apiRouter from "./src/routers/apiRouter.js";
+import cors from "cors";
 
 const app = express();
 const appDebug = debug("app");
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(cors());
 
 app.use("/api", apiRouter);
 

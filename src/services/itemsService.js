@@ -1,8 +1,9 @@
 import axios from "axios";
 import debug from "debug";
-import { itemDetailMapper, itemMapper } from "../Utils/UtilFunctions.js";
+import { itemDetailMapper, itemMapper } from "../Utils/utilFunctions.js";
 import externalApis from "./externalApis.js";
 import messageService from "./messageService.js";
+import author from "../Utils/author.js";
 
 const itemsServiceDebug = debug("app:itemsService");
 
@@ -35,7 +36,7 @@ function itemsService() {
           return sum;
         },
         {
-          author: { name: "", lastName: "" },
+          author,
           categories: [],
           items: [],
         }
@@ -71,10 +72,7 @@ function itemsService() {
       } = await axios.get(externalApis.itemDetailById(id));
       itemsServiceDebug(messageService.success(callerName)("Fetched items"));
       return {
-        author: {
-          name: "",
-          lastName: "",
-        },
+        author,
         item: {
           ...itemDetailMapper(item),
           description: itemDescription,
